@@ -1354,7 +1354,7 @@ input:focus {
     #loginSection,
     #quizSection,
     .podium-top-panel,
-    .cert-master-card > h3,
+    .cert-master-card > .card-header,
     .action-buttons-full {
         display: none !important;
     }
