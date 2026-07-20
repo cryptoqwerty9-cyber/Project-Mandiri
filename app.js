@@ -897,6 +897,31 @@ function finishQuiz() {
 
     const isPassed = State.correctCount >= 16;
     
+    // Adjust competitor scores dynamically to ensure the player stands on the podium (Top 3)
+    // and displays their actual name/rank based on score.
+    if (State.score >= 250) {
+        // Player is 1st Place (Gold)
+        State.competitors[0].score = State.score - 15;
+        State.competitors[1].score = State.score - 30;
+        State.competitors[2].score = State.score - 50;
+        State.competitors[3].score = State.score - 70;
+        State.competitors[4].score = State.score - 90;
+    } else if (State.score >= 150) {
+        // Player is 2nd Place (Silver)
+        State.competitors[0].score = State.score + 20; // 1st Place
+        State.competitors[1].score = State.score - 20; // 3rd Place
+        State.competitors[2].score = State.score - 40;
+        State.competitors[3].score = State.score - 60;
+        State.competitors[4].score = State.score - 80;
+    } else {
+        // Player is 3rd Place (Bronze)
+        State.competitors[0].score = State.score + 40; // 1st Place
+        State.competitors[1].score = State.score + 20; // 2nd Place
+        State.competitors[2].score = State.score - 15;
+        State.competitors[3].score = State.score - 30;
+        State.competitors[4].score = State.score - 50;
+    }
+
     // Sort final participants for podium
     const finalStandings = getLeaderboardData();
     
@@ -905,12 +930,32 @@ function finishQuiz() {
     const p2 = finalStandings[1] || { name: 'Empty', score: 0 };
     const p3 = finalStandings[2] || { name: 'Empty', score: 0 };
 
-    document.getElementById("podium1Name").innerText = p1.name;
+    const formatPodiumName = (p) => {
+        if (p.isPlayer) {
+            return `${State.user.pangkat} ${p.name.split(' ')[0]} (ANDA)`;
+        }
+        return p.name;
+    };
+
+    document.getElementById("podium1Name").innerText = formatPodiumName(p1);
     document.getElementById("podium1Score").innerText = `${p1.score} Poin`;
-    document.getElementById("podium2Name").innerText = p2.name;
+    document.getElementById("podium2Name").innerText = formatPodiumName(p2);
     document.getElementById("podium2Score").innerText = `${p2.score} Poin`;
-    document.getElementById("podium3Name").innerText = p3.name;
+    document.getElementById("podium3Name").innerText = formatPodiumName(p3);
     document.getElementById("podium3Score").innerText = `${p3.score} Poin`;
+
+    // Highlight Player Column
+    const col1 = document.getElementById("podiumCol1");
+    const col2 = document.getElementById("podiumCol2");
+    const col3 = document.getElementById("podiumCol3");
+    
+    col1.classList.remove("player-highlight");
+    col2.classList.remove("player-highlight");
+    col3.classList.remove("player-highlight");
+
+    if (p1.isPlayer) col1.classList.add("player-highlight");
+    if (p2.isPlayer) col2.classList.add("player-highlight");
+    if (p3.isPlayer) col3.classList.add("player-highlight");
 
     // Fill Certificate Preview
     document.getElementById("certName").innerText = State.user.nama.toUpperCase();
