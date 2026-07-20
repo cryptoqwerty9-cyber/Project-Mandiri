@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER AWARENESS - Kuis Keamanan Siber Instansi</title>
+    
+    <!-- Meta SEO -->
+    <meta name="description" content="Aplikasi kuis interaktif keamanan siber militer dan kepolisian. Tingkatkan kesadaran siber, ukur poin kepatuhan siber Anda sekarang!">
+    <meta name="keywords" content="cyber security, awareness quiz, militer, kepolisian, keamanan siber, indonesia">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Grid & Scanline Background overlays -->
+    <div class="cyber-grid"></div>
+    <div class="scanlines"></div>
+
+    <!-- Header Section -->
+    <header class="cyber-header">
+        <div class="header-logo">
+            <span class="logo-icon">&#x26E8;</span>
+            <span class="logo-text">CYBER <span class="accent-text">AWARENESS</span></span>
+        </div>
+        <div class="system-status">
+            <span class="status-indicator active"></span>
+            <span class="status-text" id="statusText">SYSTEM SECURE</span>
+            <button id="muteBtn" class="mute-btn" title="Toggle Sound">
+                <span id="muteIcon">&#x1F50A;</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- 1. Halaman Login / Registrasi -->
+        <section id="loginSection" class="cyber-section active">
+            <div class="registration-layout">
+                <!-- Left Side Banner -->
+                <div class="cyber-card side-banner left-banner">
+                    <img src="logo.jpg" alt="Logo Sintelad" class="banner-logo">
+                    <h2 class="banner-title">SPABAN VII/SIBER SINTELAD</h2>
+                    <div class="banner-badge">CYBER SECURITY ASSESSMENT</div>
+                </div>
+
+                <!-- Center Registration Form Card -->
+                <div class="cyber-card login-card">
+                    <div class="card-header">
+                        <span class="decor-line-left"></span>
+                        <h2>REGISTRASI PERSONEL</h2>
+                        <span class="decor-line-right"></span>
+                    </div>
+                    <p class="subtitle">Lengkapi kredensial Anda sebelum mengakses sistem simulasi siber.</p>
+                    
+                    <form id="registrationForm" onsubmit="event.preventDefault();">
+                        <div class="form-group">
+                            <label for="inputNama">Nama Lengkap</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">&#x1F464;</span>
+                                <input type="text" id="inputNama" required placeholder="Contoh: Budi Santoso" autocomplete="off">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="inputPangkat">Pangkat / Golongan</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">&#x1F396;</span>
+                                    <input type="text" id="inputPangkat" required placeholder="Contoh: Lettu / Penata" autocomplete="off">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="inputNrp">NRP / NIP</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">&#x1F4B3;</span>
+                                    <input type="text" id="inputNrp" required placeholder="Contoh: 12345678" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="inputJabatan">Jabatan</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">&#x1F4BC;</span>
+                                    <input type="text" id="inputJabatan" required placeholder="Contoh: Danramil / Kasubbag" autocomplete="off">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="inputSatuan">Satuan Kerja / Instansi</label>
+                                <div class="input-wrapper">
+                                    <span class="input-icon">&#x1F3E2;</span>
+                                    <input type="text" id="inputSatuan" required placeholder="Contoh: Kodim 0733 / Polda Metro" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="startQuizBtn" class="cyber-btn primary-btn disabled" disabled>
+                            <span class="btn-glow"></span>
+                            <span class="btn-text">MULAI KUIS</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Side Banner -->
+                <div class="cyber-card side-banner right-banner">
+                    <span class="warning-icon">&#x26A0;</span>
+                    <h2 class="banner-quote">KEAMANAN BERBANDING TERBALIK DENGAN KENYAMANAN !!!</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Halaman Kuis Interaktif -->
+        <section id="quizSection" class="cyber-section">
+            <div class="quiz-grid">
+                <!-- Main Quiz Panel -->
+                <div class="cyber-card quiz-card">
+                    <div class="quiz-header">
+                        <div class="question-tracker">
+                            <span class="label">SOAL</span>
+                            <span class="value" id="currentQuestionNum">01</span>
+                            <span class="divider">/</span>
+                            <span class="total">30</span>
+                        </div>
+                        
+                        <!-- Circular Visual Timer -->
+                        <div class="timer-container">
+                            <svg class="timer-svg" viewBox="0 0 80 80">
+                                <circle class="timer-track" cx="40" cy="40" r="34"></circle>
+                                <circle class="timer-bar" id="timerBar" cx="40" cy="40" r="34" transform="rotate(-90 40 40)"></circle>
+                            </svg>
+                            <div class="timer-text" id="timerSeconds">18</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+                    </div>
+
+                    <!-- Question Block -->
+                    <div class="question-container">
+                        <h3 id="questionText">Loading...</h3>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <div class="options-grid" id="optionsContainer">
+                        <!-- Options filled by JS -->
+                    </div>
+
+                    <!-- Live Mini Status Bar -->
+                    <div class="quiz-footer">
+                        <div class="score-display">
+                            <span class="label">SKOR AKTIF:</span>
+                            <span class="value score-val" id="activeScore">0</span>
+                        </div>
+                        <div class="stats-mini">
+                            <span class="stat-item correct-stat">&#x2714; <span id="correctMini">0</span></span>
+                            <span class="stat-item wrong-stat">&#x2718; <span id="wrongMini">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Live Leaderboard -->
+                <div class="cyber-card sidebar-card">
+                    <div class="card-header">
+                        <h3>LIVE LEADERBOARD</h3>
+                    </div>
+                    <div class="leaderboard-chart-container">
+                        <canvas id="liveLeaderboardChart"></canvas>
+                    </div>
+                    <div class="live-ticker">
+                        <span class="ticker-dot"></span>
+                        <marquee class="ticker-text" scrollamount="3">DATA RANGKING DIPERBARUI SECARA REAL-TIME. JAGA PERTAHANAN SIBER ANDA!</marquee>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Halaman Hasil Akhir / Podium -->
+        <section id="resultSection" class="cyber-section">
+            <!-- Top: Celebration & Podium -->
+            <div class="podium-top-panel">
+                <div class="cyber-card result-celebration-card">
+                    <div class="card-header">
+                        <span class="decor-line-left"></span>
+                        <h2>PODIUM KEJUARAAN SIBER</h2>
+                        <span class="decor-line-right"></span>
+                    </div>
+                    
+                    <!-- Podium Graphic -->
+                    <div class="podium-wrapper">
+                        <!-- 2nd Place -->
+                        <div class="podium-col second-place">
+                            <div class="podium-avatar silver-avatar">
+                                <span class="medal-icon">&#x1F948;</span>
+                                <div class="name-tag" id="podium2Name">Cyber_Ops</div>
+                                <div class="score-tag" id="podium2Score">260 Poin</div>
+                            </div>
+                            <div class="podium-step step-2">
+                                <span class="step-num">2</span>
+                            </div>
+                        </div>
+
+                        <!-- 1st Place (Highest) -->
+                        <div class="podium-col first-place">
+                            <div class="podium-avatar gold-avatar">
+                                <span class="medal-icon">&#x1F947;</span>
+                                <div class="name-tag" id="podium1Name">Budi S.</div>
+                                <div class="score-tag" id="podium1Score">280 Poin</div>
+                            </div>
+                            <div class="podium-step step-1">
+                                <span class="step-num">1</span>
+                            </div>
+                        </div>
+
+                        <!-- 3rd Place -->
+                        <div class="podium-col third-place">
+                            <div class="podium-avatar bronze-avatar">
+                                <span class="medal-icon">&#x1F949;</span>
+                                <div class="name-tag" id="podium3Name">Delta_Force</div>
+                                <div class="score-tag" id="podium3Score">245 Poin</div>
+                            </div>
+                            <div class="podium-step step-3">
+                                <span class="step-num">3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confetti Canvas overlay inside card -->
+                    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottom: Full-Width Premium Certificate -->
+            <div class="certificate-full-panel">
+                <div class="cyber-card cert-master-card">
+                    <div class="card-header">
+                        <h3>PRATINJAU DOKUMEN SERTIFIKAT KELULUSAN</h3>
+                    </div>
+
+                    <div class="cert-card-preview" id="certificateContent">
+                        <div class="cert-watermark">&#x26E8;</div>
+                        <div class="cert-corner tl"></div>
+                        <div class="cert-corner tr"></div>
+                        <div class="cert-corner bl"></div>
+                        <div class="cert-corner br"></div>
+                        
+                        <div class="cert-border-double">
+                            <div class="cert-header">
+                                <img src="logo.jpg" alt="Logo Sintelad" class="cert-logo">
+                                <div class="cert-top-badge" id="certBadge">SECURE SYSTEMS ASSURANCE</div>
+                                <h2 id="certTitle">SERTIFIKAT KELULUSAN</h2>
+                                <p class="cert-sub">SPABAN VII/SIBER SINTELAD</p>
+                            </div>
+                            
+                            <div class="cert-body">
+                                <p class="cert-decl">Diberikan secara terhormat kepada personel siber:</p>
+                                <h1 class="cert-name" id="certName">BUDI SANTOSO</h1>
+                                
+                                <div class="cert-meta-row">
+                                    <div class="meta-item">
+                                        <span class="m-label">PANGKAT/GOL:</span>
+                                        <span class="m-val" id="certPangkat">Lettu</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="m-label">NRP/NIP:</span>
+                                        <span class="m-val" id="certNrp">12345678</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="m-label">JABATAN:</span>
+                                        <span class="m-val" id="certJabatan">Danramil</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="m-label">SATUAN/INSTANSI:</span>
+                                        <span class="m-val" id="certSatuan">Kodim 0733</span>
+                                    </div>
+                                </div>
+
+                                <p class="cert-summary-text" id="certSummaryText">
+                                    Dinyatakan <strong>LULUS & KOMPETEN</strong> dalam evaluasi siber "CYBER AWARENESS" tingkat lanjut. Personel ini membuktikan kecakapan dan kesadaran taktis tingkat tinggi untuk mendeteksi, mencegah, dan menanggulangi ancaman keamanan siber di lingkungan kerja.
+                                </p>
+                                
+                                <div class="cert-scores">
+                                    <div class="cert-score-item">
+                                        <span class="c-label">SKOR KELULUSAN</span>
+                                        <span class="c-val text-green" id="certScore">280</span>
+                                    </div>
+                                    <div class="cert-score-item">
+                                        <span class="c-label">JAWABAN BENAR</span>
+                                        <span class="c-val" id="certCorrect">28</span>
+                                    </div>
+                                    <div class="cert-score-item">
+                                        <span class="c-label">SALAH / LEWAT</span>
+                                        <span class="c-val text-red" id="certWrong">2 / 0</span>
+                                    </div>
+                                    <div class="cert-score-item">
+                                        <span class="c-label">STATUS KELULUSAN</span>
+                                        <span class="c-val text-green" id="certStatus">LULUS</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="cert-footer">
+                                <div class="cert-sign">
+                                    <span class="sign-title">Otoritas Validasi Siber</span>
+                                    <div class="sign-seal">CYBER SECURITY COMMAND</div>
+                                    <span class="sign-id" id="certSerial">ID: CERT-CA-2026-XXXX</span>
+                                </div>
+                                <div class="cert-date-block">
+                                    <span class="date-label">TANGGAL VALIDASI:</span>
+                                    <span class="date-val" id="certDate">2026-07-20</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons-full">
+                        <button onclick="printReport()" class="cyber-btn secondary-btn large-btn">
+                            <span class="btn-glow"></span>
+                            <span class="btn-text">&#x1F5A8; CETAK SERTIFIKAT TACTICAL</span>
+                        </button>
+                        <button onclick="restartQuiz()" class="cyber-btn primary-btn large-btn">
+                            <span class="btn-glow"></span>
+                            <span class="btn-text">&#x21BB; ULANGI SIMULASI KUIS</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="cyber-footer">
+        <p>&copy; 2026 CYBER AWARENESS. Developed for Security Readiness & Operations.</p>
+    </footer>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+</html>
