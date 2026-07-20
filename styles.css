@@ -178,6 +178,7 @@ body {
     width: 100%;
     max-width: 1200px;
     animation: fadeIn 0.5s ease-out forwards;
+    position: relative;
 }
 
 .cyber-section.active {
@@ -1534,4 +1535,41 @@ input:focus {
     .text-red {
         color: #ff0055 !important;
     }
+}
+
+/* Large Center Emoji Overlay styling */
+.emoji-large-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 150px;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.emoji-large-overlay.show-correct {
+    animation: emojiShowCorrect 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.emoji-large-overlay.show-wrong {
+    animation: emojiShowWrong 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes emojiShowCorrect {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; filter: drop-shadow(0 0 0 rgba(57, 255, 20, 0)); }
+    30% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 0.95; filter: drop-shadow(0 0 35px rgba(57, 255, 20, 0.8)); }
+    75% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.95; filter: drop-shadow(0 0 25px rgba(57, 255, 20, 0.6)); }
+    100% { transform: translate(-50%, -50%) scale(0.5) rotate(10deg); opacity: 0; filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0)); }
+}
+
+@keyframes emojiShowWrong {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(15deg); opacity: 0; filter: drop-shadow(0 0 0 rgba(255, 0, 85, 0)); }
+    30% { transform: translate(-50%, -50%) scale(1.2) rotate(-5deg); opacity: 0.95; filter: drop-shadow(0 0 35px rgba(255, 0, 85, 0.8)); }
+    75% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.95; filter: drop-shadow(0 0 25px rgba(255, 0, 85, 0.6)); }
+    100% { transform: translate(-50%, -50%) scale(0.5) rotate(-10deg); opacity: 0; filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0)); }
 }

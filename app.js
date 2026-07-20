@@ -729,16 +729,25 @@ function selectOption(selectedIndex) {
     const currentQ = QUESTIONS[State.currentQuestionIndex];
     const optionsContainer = document.getElementById("optionsContainer");
     const optionButtons = optionsContainer.getElementsByClassName("option-btn");
+    const overlay = document.getElementById("emojiOverlay");
 
     // Disable all options immediately to prevent double-click
     for (let btn of optionButtons) {
         btn.classList.add("disabled");
     }
 
+    // Reset overlay state
+    overlay.className = "emoji-large-overlay";
+    void overlay.offsetWidth; // force reflow
+
     if (selectedIndex === currentQ.answer) {
         // Correct Answer
         optionButtons[selectedIndex].classList.add("correct");
         optionButtons[selectedIndex].innerHTML += ` <span class="feedback-emoji">👍</span>`;
+        
+        overlay.innerText = "👍";
+        overlay.classList.add("show-correct");
+        
         State.score += 10;
         State.correctCount++;
         CyberSound.correct();
@@ -748,6 +757,10 @@ function selectOption(selectedIndex) {
         optionButtons[selectedIndex].innerHTML += ` <span class="feedback-emoji">🤪</span>`;
         optionButtons[currentQ.answer].classList.add("correct");
         optionButtons[currentQ.answer].innerHTML += ` <span class="feedback-emoji">👍</span>`;
+        
+        overlay.innerText = "🤪";
+        overlay.classList.add("show-wrong");
+        
         State.score = Math.max(0, State.score - 5); // Prevent score from going below 0
         State.wrongCount++;
         CyberSound.wrong();
@@ -758,6 +771,7 @@ function selectOption(selectedIndex) {
 
     // Small delay to let the user see the answer, then proceed to the next question
     setTimeout(() => {
+        overlay.className = "emoji-large-overlay";
         State.currentQuestionIndex++;
         loadQuestion();
     }, 1200);
@@ -767,10 +781,19 @@ function handleTimeOut() {
     const currentQ = QUESTIONS[State.currentQuestionIndex];
     const optionsContainer = document.getElementById("optionsContainer");
     const optionButtons = optionsContainer.getElementsByClassName("option-btn");
+    const overlay = document.getElementById("emojiOverlay");
+
+    // Reset overlay state
+    overlay.className = "emoji-large-overlay";
+    void overlay.offsetWidth; // force reflow
 
     // Show correct answer and flag as unanswered
     optionButtons[currentQ.answer].classList.add("correct");
     optionButtons[currentQ.answer].innerHTML += ` <span class="feedback-emoji">👍</span>`;
+    
+    overlay.innerText = "🤪";
+    overlay.classList.add("show-wrong");
+
     State.unansweredCount++;
     CyberSound.wrong();
 
@@ -780,6 +803,7 @@ function handleTimeOut() {
     }
 
     setTimeout(() => {
+        overlay.className = "emoji-large-overlay";
         State.currentQuestionIndex++;
         loadQuestion();
     }, 1200);
