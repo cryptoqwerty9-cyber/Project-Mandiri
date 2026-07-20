@@ -520,7 +520,8 @@ function generateCompetitors() {
         list.push({
             name: `${shuffledRanks[i]} ${shuffledNames[i].split(' ')[0]}`,
             satuan: shuffledDeps[i],
-            score: Math.floor(Math.random() * 3) * 10
+            score: Math.floor(Math.random() * 3) * 10,
+            totalTimeSpent: Math.floor(Math.random() * 15) + 5 // Initial time spent in seconds
         });
     }
     return list;
@@ -543,6 +544,7 @@ const State = {
     timer: null,
     timeLeft: 18,
     isMuted: false,
+    totalTimeSpent: 0, // Track total time taken
 
     // Mock Live Leaderboard competitors
     competitors: [],
@@ -553,6 +555,7 @@ const State = {
         this.correctCount = 0;
         this.wrongCount = 0;
         this.unansweredCount = 0;
+        this.totalTimeSpent = 0;
         clearInterval(this.timer);
         this.competitors = generateCompetitors();
     }
@@ -745,6 +748,9 @@ function resetTimer() {
 function selectOption(selectedIndex) {
     clearInterval(State.timer);
     
+    // Accumulate time spent on this question
+    State.totalTimeSpent += (18 - State.timeLeft);
+    
     const currentQ = QUESTIONS[State.currentQuestionIndex];
     const optionsContainer = document.getElementById("optionsContainer");
     const optionButtons = optionsContainer.getElementsByClassName("option-btn");
@@ -797,6 +803,9 @@ function selectOption(selectedIndex) {
 }
 
 function handleTimeOut() {
+    // Accumulate the full 18 seconds since the timer ran out
+    State.totalTimeSpent += 18;
+
     const currentQ = QUESTIONS[State.currentQuestionIndex];
     const optionsContainer = document.getElementById("optionsContainer");
     const optionButtons = optionsContainer.getElementsByClassName("option-btn");
@@ -875,17 +884,23 @@ function initLeaderboardChart() {
     });
 }
 
-// Combine player score and competitors, sort descending
+// Combine player score and competitors, sort descending by score, then ascending by time spent
 function getLeaderboardData() {
     const playerItem = {
         name: State.user.nama || "Anda",
         satuan: State.user.satuan,
         score: State.score,
+        totalTimeSpent: State.totalTimeSpent,
         isPlayer: true
     };
 
     const combined = [...State.competitors, playerItem];
-    combined.sort((a, b) => b.score - a.score);
+    combined.sort((a, b) => {
+        if (b.score !== a.score) {
+            return b.score - a.score;
+        }
+        return a.totalTimeSpent - b.totalTimeSpent; // faster time wins on tie
+    });
     return combined;
 }
 
@@ -900,6 +915,7 @@ function updateLeaderboardRealtime() {
         } else {
             comp.score = Math.max(0, comp.score - 5);
         }
+        comp.totalTimeSpent += Math.floor(Math.random() * 10) + 3; // simulated time spent per question
     });
 
     const updatedData = getLeaderboardData();
@@ -1005,7 +1021,7 @@ function finishQuiz() {
         document.getElementById("certTitle").innerText = "SERTIFIKAT KELULUSAN";
         document.getElementById("certStatus").innerText = "LULUS";
         document.getElementById("certStatus").className = "c-val text-green";
-        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>LULUS & KOMPETEN</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Personel ini membuktikan kecakapan dan kesadaran taktis tingkat tinggi untuk mendeteksi, mencegah, dan menanggulangi ancaman keamanan siber di lingkungan kerja.`;
+        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>LULUS & KOMPETEN</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Personel ini membuktikan kecakapan dan kesadaran taktis tingkat tinggi untuk mendeteksi, mencegah, dan menanggulangi ancaman keamanan siber di lingkungan kerja dengan durasi waktu <strong>${State.totalTimeSpent} detik</strong>.`;
         startConfetti();
     } else {
         CyberSound.wrong();
@@ -1013,7 +1029,7 @@ function finishQuiz() {
         document.getElementById("certTitle").innerText = "HASIL EVALUASI SIBER";
         document.getElementById("certStatus").innerText = "TIDAK LULUS";
         document.getElementById("certStatus").className = "c-val text-red";
-        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>BELUM LULUS (TIDAK LULUS)</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Syarat minimal kelulusan adalah <strong>15 jawaban benar</strong> (Hasil Anda: ${State.correctCount} benar). Personel diwajibkan mengulangi simulasi kuis guna meningkatkan pemahaman pertahanan siber.`;
+        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>BELUM LULUS (TIDAK LULUS)</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Syarat minimal kelulusan adalah <strong>15 jawaban benar</strong> (Hasil Anda: ${State.correctCount} benar dengan durasi waktu <strong>${State.totalTimeSpent} detik</strong>). Personel diwajibkan mengulangi simulasi kuis guna meningkatkan pemahaman pertahanan siber.`;
     }
 }
 
