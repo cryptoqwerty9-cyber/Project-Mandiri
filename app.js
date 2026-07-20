@@ -917,7 +917,7 @@ function finishQuiz() {
     CyberMusic.stop();
     switchView("resultSection");
 
-    const isPassed = State.correctCount >= 16;
+    const isPassed = State.correctCount >= 15;
     
     // Adjust competitor scores dynamically to ensure the player stands on the podium (Top 3)
     // and displays their actual name/rank based on score.
@@ -1013,7 +1013,7 @@ function finishQuiz() {
         document.getElementById("certTitle").innerText = "HASIL EVALUASI SIBER";
         document.getElementById("certStatus").innerText = "TIDAK LULUS";
         document.getElementById("certStatus").className = "c-val text-red";
-        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>BELUM LULUS (TIDAK LULUS)</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Syarat minimal kelulusan adalah <strong>16 jawaban benar</strong> (Hasil Anda: ${State.correctCount} benar). Personel diwajibkan mengulangi simulasi kuis guna meningkatkan pemahaman pertahanan siber.`;
+        document.getElementById("certSummaryText").innerHTML = `Dinyatakan <strong>BELUM LULUS (TIDAK LULUS)</strong> dalam evaluasi siber "CYBER AWARENESS" SPABAN VII/SIBER SINTELAD. Syarat minimal kelulusan adalah <strong>15 jawaban benar</strong> (Hasil Anda: ${State.correctCount} benar). Personel diwajibkan mengulangi simulasi kuis guna meningkatkan pemahaman pertahanan siber.`;
     }
 }
 
