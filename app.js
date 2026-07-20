@@ -121,29 +121,32 @@ const CyberMusic = {
         this.isPlaying = true;
 
         try {
-            // Heartbeat minor-second sequence (D2 = 73.42Hz, D#2 = 77.78Hz) for maximal psychological tension
-            const bassSequence = [73.42, 77.78];
-            const melodySequence = [293.66, 311.13, 349.23, 369.99, 440.00]; // D4, D#4, F4, F#4, A4 (Tense notes)
+            // High-tension dissonant sequence (extremely harsh sawtooth & square alarms)
+            const bassSequence = [73.42, 77.78, 82.41, 77.78]; // D2, D#2, E2, D#2 (Dissonant bass cycle)
+            const melodySequence = [1200, 1600, 1800, 2200]; // Piercing high-pitch tones
             let step = 0;
 
             const playStep = () => {
                 if (!this.isPlaying || this.muted) return;
                 
-                // Play heartbeat pulse every step (800ms intervals) - Louder Volume 0.35
+                // Play loud, vibrating bass beat - Volume: 0.8 (Sawtooth with high filter cutoff)
                 const bassFreq = bassSequence[step % bassSequence.length];
-                this.playSynthNote(bassFreq, 'sawtooth', 0.6, 0.35, 120);
+                this.playSynthNote(bassFreq, 'sawtooth', 0.35, 0.8, 400);
 
-                // Play higher pitch eerie background notes occasionally
-                if (Math.random() > 0.6) {
-                    const melFreq = melodySequence[Math.floor(Math.random() * melodySequence.length)];
-                    this.playSynthNote(melFreq, 'sine', 0.25, 0.12, 1600, 0.1);
+                // Play a secondary detuned, dissonant bass oscillator (detuned by 3Hz) to create a disturbing, vibrating pulse
+                this.playSynthNote(bassFreq + 3, 'sawtooth', 0.35, 0.8, 400);
+
+                // High-tension screeching siren notes (Play loud square alarm waves frequently)
+                if (step % 2 === 0) {
+                    const alarmFreq = melodySequence[step % melodySequence.length];
+                    this.playSynthNote(alarmFreq, 'square', 0.2, 0.45, 6000); // 0.45 gain, extremely piercing!
                 }
 
                 step++;
             };
 
             playStep();
-            this.intervalId = setInterval(playStep, 800); // Accelerated heartbeat pace (800ms instead of 1000ms)
+            this.intervalId = setInterval(playStep, 350); // Ultra-fast heartbeat tempo (350ms)
         } catch (e) {
             console.warn("Could not play music:", e);
         }
