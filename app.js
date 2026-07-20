@@ -767,8 +767,8 @@ function selectOption(selectedIndex) {
         overlay.innerText = "👍";
         overlay.classList.add("show-correct");
         
-        State.score += 10;
         State.correctCount++;
+        State.score = Math.max(0, (State.correctCount * 10) - (State.wrongCount * 5));
         CyberSound.correct();
     } else {
         // Wrong Answer
@@ -780,8 +780,8 @@ function selectOption(selectedIndex) {
         overlay.innerText = "🤪";
         overlay.classList.add("show-wrong");
         
-        State.score = Math.max(0, State.score - 5); // Prevent score from going below 0
         State.wrongCount++;
+        State.score = Math.max(0, (State.correctCount * 10) - (State.wrongCount * 5));
         CyberSound.wrong();
     }
 
@@ -814,6 +814,7 @@ function handleTimeOut() {
     overlay.classList.add("show-wrong");
 
     State.unansweredCount++;
+    State.score = Math.max(0, (State.correctCount * 10) - (State.wrongCount * 5));
     CyberSound.wrong();
 
     // Disable choices
