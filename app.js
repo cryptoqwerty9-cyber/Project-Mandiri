@@ -738,13 +738,16 @@ function selectOption(selectedIndex) {
     if (selectedIndex === currentQ.answer) {
         // Correct Answer
         optionButtons[selectedIndex].classList.add("correct");
+        optionButtons[selectedIndex].innerHTML += ` <span class="feedback-emoji">👍</span>`;
         State.score += 10;
         State.correctCount++;
         CyberSound.correct();
     } else {
         // Wrong Answer
         optionButtons[selectedIndex].classList.add("wrong");
+        optionButtons[selectedIndex].innerHTML += ` <span class="feedback-emoji">🤪</span>`;
         optionButtons[currentQ.answer].classList.add("correct");
+        optionButtons[currentQ.answer].innerHTML += ` <span class="feedback-emoji">👍</span>`;
         State.score = Math.max(0, State.score - 5); // Prevent score from going below 0
         State.wrongCount++;
         CyberSound.wrong();
@@ -767,6 +770,7 @@ function handleTimeOut() {
 
     // Show correct answer and flag as unanswered
     optionButtons[currentQ.answer].classList.add("correct");
+    optionButtons[currentQ.answer].innerHTML += ` <span class="feedback-emoji">👍</span>`;
     State.unansweredCount++;
     CyberSound.wrong();
 

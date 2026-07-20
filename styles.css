@@ -662,6 +662,18 @@ input:focus {
     opacity: 0.6;
 }
 
+.feedback-emoji {
+    font-size: 26px;
+    margin-left: auto;
+    display: inline-block;
+    animation: emojiPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes emojiPop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 /* Quiz Footer Stats */
 .quiz-footer {
     display: flex;
