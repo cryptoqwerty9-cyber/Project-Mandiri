@@ -505,6 +505,27 @@ const QUESTIONS = [
     }
 ];
 
+const RANKS = ["Lettu", "Bripka", "Penata", "Mayor", "AKP", "Kapten", "Aiptu", "Kolonel", "Kompol", "Letda"];
+const NAMES = ["Ahmad Fauzi", "Eko Prasetyo", "Rina Amelia", "Hendra Kurniawan", "Dedi Saputra", "Siti Rahma", "Budi Wijaya", "Agus Setiawan", "Dewi Lestari", "Rian Hidayat"];
+const DEPARTMENTS = ["Kodam Jaya", "Polda Metro", "Kemhan", "Mabes TNI", "Bareskrim", "Sintelad", "Disinfolahta", "BAIS", "Polda Jabar", "Puskes TNI"];
+
+function generateCompetitors() {
+    const list = [];
+    const shuffledRanks = [...RANKS].sort(() => 0.5 - Math.random());
+    const shuffledNames = [...NAMES].sort(() => 0.5 - Math.random());
+    const shuffledDeps = [...DEPARTMENTS].sort(() => 0.5 - Math.random());
+
+    for (let i = 0; i < 5; i++) {
+        // Start with a small random starting offset (0 to 20 score) to simulate they started slightly earlier/later
+        list.push({
+            name: `${shuffledRanks[i]} ${shuffledNames[i].split(' ')[0]}`,
+            satuan: shuffledDeps[i],
+            score: Math.floor(Math.random() * 3) * 10
+        });
+    }
+    return list;
+}
+
 // App State Management
 const State = {
     user: {
@@ -524,13 +545,7 @@ const State = {
     isMuted: false,
 
     // Mock Live Leaderboard competitors
-    competitors: [
-        { name: "Puspen_TNI", satuan: "Mabes TNI", score: 250 },
-        { name: "Siber_Polda", satuan: "Polda Metro", score: 230 },
-        { name: "Satkom_Lek", satuan: "Kodiklat", score: 210 },
-        { name: "Intel_Ops_5", satuan: "BAIS", score: 190 },
-        { name: "Reskrim_Siber", satuan: "Bareskrim", score: 180 }
-    ],
+    competitors: [],
 
     reset() {
         this.currentQuestionIndex = 0;
@@ -539,6 +554,7 @@ const State = {
         this.wrongCount = 0;
         this.unansweredCount = 0;
         clearInterval(this.timer);
+        this.competitors = generateCompetitors();
     }
 };
 
@@ -876,10 +892,12 @@ function getLeaderboardData() {
 function updateLeaderboardRealtime() {
     if (!chartInstance) return;
 
-    // Small random incremental increase to competitors to simulate other players doing the quiz
+    // Simulate competitor answers dynamically (70% correct rate, +10 points on correct, -5 on wrong)
     State.competitors.forEach(comp => {
-        if (Math.random() > 0.4) {
-            comp.score += Math.floor(Math.random() * 8) + 2;
+        if (Math.random() > 0.3) {
+            comp.score += 10;
+        } else {
+            comp.score = Math.max(0, comp.score - 5);
         }
     });
 
@@ -1021,14 +1039,8 @@ function restartQuiz() {
     startBtn.classList.add("disabled");
     startBtn.disabled = true;
 
-    // Reset competitors scores
-    State.competitors = [
-        { name: "Puspen_TNI", satuan: "Mabes TNI", score: 250 },
-        { name: "Siber_Polda", satuan: "Polda Metro", score: 230 },
-        { name: "Satkom_Lek", satuan: "Kodiklat", score: 210 },
-        { name: "Intel_Ops_5", satuan: "BAIS", score: 190 },
-        { name: "Reskrim_Siber", satuan: "Bareskrim", score: 180 }
-    ];
+    // Reset competitors scores dynamically
+    State.competitors = generateCompetitors();
 }
 
 // Custom Lightweight Canvas Confetti Engine
